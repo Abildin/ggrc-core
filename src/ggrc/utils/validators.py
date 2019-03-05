@@ -16,7 +16,7 @@ def validate_object_type_ggrcq(mapper, content, target):
   model = get_model(target.object_type)
   user = login_module.get_current_user(False)
 
-  if not user or user.is_anonymous():
+  if target.internal or not user or user.is_anonymous():
     return
 
   should_prevent = all([
