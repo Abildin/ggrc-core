@@ -3,6 +3,7 @@
 
 """Collection of utils for login and user generation.
 """
+from collections import namedtuple
 import datetime
 import json
 from email.utils import parseaddr
@@ -205,11 +206,16 @@ def find_or_create_ext_app_user():
   return user
 
 
-def parse_user_email(request, header, mandatory):
-  """Parses a user email from the request header.
+Credentials = namedtuple("Credentials", ["email", "name"])
+
+
+def parse_user_credentials(request, header, mandatory):
+  """Parses a user email and name from the request header.
 
   Retrieves user email from the request header and
   validates it based on being mandatory or not.
+
+  Name is not required.
 
   Args:
       request: the original request.
@@ -217,7 +223,7 @@ def parse_user_email(request, header, mandatory):
       mandatory: flag that header value is mandatory or not.
 
   Returns:
-      A parsed user email.
+      A parsed user EmailCredentials with email and name.
 
   Raises:
      BadRequest: Raised when validation on email has failed.
@@ -231,13 +237,14 @@ def parse_user_email(request, header, mandatory):
   try:
     user = json.loads(user)
     email = str(user["email"])
+    name = user.get("name")
   except (TypeError, ValueError, KeyError):
     raise exceptions.BadRequest(
         errors.WRONG_PERSON_HEADER_FORMAT.format(header, user))
   if '@' not in parseaddr(email)[1]:
     raise exceptions.BadRequest(
         errors.WRONG_PERSON_HEADER_FORMAT.format(header, user))
-  return email
+  return Credentials(email, name)
 
 
 def find_user(email, modifier=None):

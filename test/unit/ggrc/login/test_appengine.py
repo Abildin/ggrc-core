@@ -102,18 +102,6 @@ class TestAppengineLogin(unittest.TestCase):
       with self.assertRaises(exceptions.BadRequest):
         login_appengine.request_loader(self.request)
 
-  def test_request_loader_user_not_registered(self):
-    """HTTP400 if user header contains json with unknown user."""
-    # imitate no user found
-    self.person_mock.query.filter_by.return_value.one.return_value = None
-    self.is_ext_user_email_mock.return_value = False
-
-    with self.assertRaises(exceptions.BadRequest):
-      user = login_appengine.request_loader(self.request)
-      print user
-
-    self.is_ext_user_email_mock.assert_called_once_with(self.EMAIL)
-
   def test_request_loader_valid_auth(self):
     """User logged in if Appid and user headers are correct."""
     person = mock.MagicMock()

@@ -7,7 +7,9 @@ from werkzeug.exceptions import Forbidden, MethodNotAllowed
 
 from ggrc import db, utils
 from ggrc.login import get_current_user, is_external_app_user
+from ggrc.login.common import create_external_user
 from ggrc.services import common
+from ggrc.utils.user_generator import parse_user_credentials
 
 
 class ExternalResource(common.Resource):
@@ -51,6 +53,22 @@ class ExternalResource(common.Resource):
 
   def add_modified_object_to_session(self, obj):
     """Update modification metadata and add object to session."""
-    obj.modified_by = get_current_user()
+    obj.modified_by = self.get_external_user()
 
     db.session.add(obj)
+
+  def get_external_user(self):
+    """Get current external user from request header."""
+    # In current implementation, "get_current_user" makes request to
+    # integration service if we call with use_external_user = True.
+    # We decided to remove HR API confirmation phase, so to prevent
+    # request sending we call it with use_external_user = False.
+    user = get_current_user(use_external_user=False)
+
+    if "X-EXTERNAL-USER" in self.request.headers:
+      credentials = parse_user_credentials(self.request, "X-EXTERNAL-USER",
+                                           mandatory=True)
+
+      user = create_external_user(user, credentials.email, credentials.name)
+
+    return user

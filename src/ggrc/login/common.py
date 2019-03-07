@@ -15,7 +15,7 @@ from ggrc.models import all_models
 from ggrc.utils.log_event import log_event
 from ggrc.utils.user_generator import (
     find_or_create_ext_app_user, is_external_app_user_email,
-    parse_user_email, find_user
+    parse_user_credentials, find_or_create_user_by_email
 )
 
 
@@ -67,39 +67,40 @@ def check_appengine_appid(request):
 
 
 def get_ggrc_user(request, mandatory):
-  """Find user from email in "X-GGRC-user" header."""
-  email = parse_user_email(request, "X-GGRC-user", mandatory=mandatory)
+  """Find user from credentials in "X-GGRC-user" header."""
+  credentials = parse_user_credentials(request, "X-GGRC-USER",
+                                       mandatory=mandatory)
 
-  if not email:
+  if not credentials:
     return None
 
-  if is_external_app_user_email(email):
+  if is_external_app_user_email(credentials.email):
     # External Application User should be created if doesn't exist.
     user = get_external_app_user(request)
   else:
-    user = all_models.Person.query.filter_by(email=email).one()
+    user = all_models.Person.query.filter_by(email=credentials.email).one()
 
   if not user:
-    raise exceptions.BadRequest("No user with such email: %s" % email)
+    raise exceptions.BadRequest("No user with such credentials: %s" %
+                                credentials.email)
 
   return user
 
 
 def get_external_app_user(request):
-  """Find or create external app user from email in "X-GGRC-user" header."""
+  """Find or create external user from credentials in "X-GGRC-USER" header."""
   app_user = find_or_create_ext_app_user()
 
   if app_user.id is None:
     db.session.commit()
 
-  external_user_email = parse_user_email(
-      request, "X-external-user", mandatory=False
-  )
+  credentials = parse_user_credentials(request, "X-EXTERNAL-USER",
+                                       mandatory=False)
 
-  if external_user_email:
-    # Create external app user provided in X-external-user header.
+  if credentials:
+    # Create external app user provided in X-EXTERNAL-USER header.
     try:
-      create_external_user(app_user, external_user_email)
+      create_external_user(app_user, credentials.email, credentials.name)
     except exceptions.BadRequest as exp:
       logger.error("Creation of external user has failed. %s", exp.message)
       raise
@@ -107,13 +108,13 @@ def get_external_app_user(request):
   return app_user
 
 
-def create_external_user(app_user, external_user_email):
+def create_external_user(app_user, email, name):
   """Create external user."""
-  external_user = find_user(external_user_email, modifier=app_user.id)
+  user = find_or_create_user_by_email(email, name, modifier=app_user.id)
 
-  if external_user and external_user.id is None:
+  if user and user.id is None:
     db.session.flush()
-    log_event(db.session, external_user, app_user.id)
+    log_event(db.session, user, app_user.id)
     db.session.commit()
 
-  return external_user
+  return user

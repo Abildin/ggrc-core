@@ -89,13 +89,12 @@ def get_current_user(use_external_user=True):
   logged_in_user = _get_current_logged_user()
   if use_external_user and is_external_app_user():
     try:
-      from ggrc.utils.user_generator import parse_user_email
-      external_user_email = parse_user_email(request,
-                                             "X-external-user",
-                                             mandatory=False)
-      if external_user_email:
+      from ggrc.utils.user_generator import parse_user_credentials
+      credentials = parse_user_credentials(request, "X-EXTERNAL-USER",
+                                           mandatory=False)
+      if credentials:
         from ggrc.utils.user_generator import find_user
-        ext_user = find_user(external_user_email, modifier=logged_in_user.id)
+        ext_user = find_user(credentials.email, modifier=logged_in_user.id)
         if ext_user:
           return ext_user
     except RuntimeError:
