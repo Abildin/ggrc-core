@@ -380,9 +380,9 @@ def propagate():
     with utils.benchmark("Propagate new ACL entries"):
       _propagate(flask.g.new_acl_ids, current_user_id)
 
-  del flask.g.new_acl_ids
-  del flask.g.new_relationship_ids
-  del flask.g.deleted_objects
+  flask.g.new_acl_ids = set()
+  flask.g.new_relationship_ids = set()
+  flask.g.deleted_objects = set()
 
 
 def _add_missing_acl_entries():
