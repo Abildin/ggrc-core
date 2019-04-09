@@ -172,7 +172,6 @@ class TestAssignableNotificationUsingImports(TestAssignableNotification):
     recipient, _, content = send_email.call_args[0]
     self.assertIn(u"Assessments have been updated", content)
 
-  @unittest.skip("An issue needs to be fixed.")
   @patch("ggrc.notifications.common.send_email")
   def test_assessment_ca_updated_notifications(self, send_email):
     """Test if updating assessment custom attr. results in a notification."""
@@ -204,7 +203,6 @@ class TestAssignableNotificationUsingImports(TestAssignableNotification):
     self.assertEqual(recipient, u"user@example.com")
     self.assertIn(u"Assessments have been updated", content)
 
-  @unittest.skip("An issue needs to be fixed.")
   @patch("ggrc.notifications.common.send_email")
   def test_assessment_url_updated_notifications(self, send_email):
     """Test if updating assessment URLs results in a notification."""
@@ -238,7 +236,6 @@ class TestAssignableNotificationUsingImports(TestAssignableNotification):
     self.assertEqual(recipient, u"user@example.com")
     self.assertIn(u"Assessments have been updated", content)
 
-  @unittest.skip("An issue needs to be fixed.")
   @patch("ggrc.notifications.common.send_email")
   def test_attaching_assessment_evidence_notifications(self, send_email):
     """Test if attaching assessment evidence results in a notification."""
@@ -272,7 +269,6 @@ class TestAssignableNotificationUsingImports(TestAssignableNotification):
     self.assertEqual(recipient, u"user@example.com")
     self.assertIn(u"Assessments have been updated", content)
 
-  @unittest.skip("An issue needs to be fixed.")
   @patch("ggrc.notifications.common.send_email")
   def test_assessment_person_updated_notifications(self, send_email):
     """Test if updating assessment people results in a notification."""
@@ -599,7 +595,6 @@ class TestAssignableNotificationUsingImports(TestAssignableNotification):
       self.assertEqual(recipient, u"user@example.com")
       self.assertIn(u"Reopened assessments", content)
 
-  @unittest.skip("An issue needs to be fixed.")
   @patch("ggrc.notifications.common.send_email")
   def test_assessment_reopen_notifications_on_ca_edit(self, send_email):
     """Test if updating assessment's CA value in reopen notification."""
@@ -634,7 +629,6 @@ class TestAssignableNotificationUsingImports(TestAssignableNotification):
       self.assertEqual(recipient, u"user@example.com")
       self.assertIn(u"Reopened assessments", content)
 
-  @unittest.skip("An issue needs to be fixed.")
   @patch("ggrc.notifications.common.send_email")
   def test_assessment_reopen_notifications_on_url_edit(self, send_email):
     """Test if updating assessment's URLs results in reopen notification."""
@@ -667,7 +661,6 @@ class TestAssignableNotificationUsingImports(TestAssignableNotification):
       self.assertEqual(recipient, u"user@example.com")
       self.assertIn(u"Reopened assessments", content)
 
-  @unittest.skip("An issue needs to be fixed.")
   @patch("ggrc.notifications.common.send_email")
   def test_assessment_reopen_notifications_on_evidence_change(
       self, send_email
@@ -705,7 +698,6 @@ class TestAssignableNotificationUsingImports(TestAssignableNotification):
       self.assertEqual(recipient, u"user@example.com")
       self.assertIn(u"Reopened assessments", content)
 
-  @unittest.skip("An issue needs to be fixed.")
   @patch("ggrc.notifications.common.send_email")
   def test_assessment_reopen_notifications_on_person_change(self, send_email):
     """Test if updating assessment people results in a reopen notification."""

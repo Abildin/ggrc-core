@@ -682,7 +682,6 @@ class TestAdvancedQueryAPI(WithQueryApi, TestCase):
         set(programs_ids["ids"]),
     )
 
-  @unittest.skip("Skip until fix resp order problem to mysql 5.6")
   def test_multiple_queries(self):
     """Multiple queries POST is identical to multiple single-query POSTs."""
     data_list = [
