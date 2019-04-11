@@ -551,7 +551,7 @@ class TestExportMultipleObjects(TestCase):
         },
         "fields": ["slug", "title", "description"],
     }, {
-        "object_name": "Risk",  # risk-3, risk-4, risk-5
+        "object_name": "Product",  # product-3, product-4, product-5
         "filters": {
             "expression": {
                 "left": {
@@ -612,7 +612,7 @@ class TestExportMultipleObjects(TestCase):
       else:
         self.assertNotIn(",con {},".format(i), response.data)
 
-    # controls
+    # product
     for i in range(115, 140):
       if i in (117, 118, 119):
         self.assertIn(",Startupsum {},".format(i), response.data)
@@ -648,7 +648,6 @@ class TestExportMultipleObjects(TestCase):
       "Project",
       "Vendor",
       "Risk Assessment",
-      "Risk",
       "Threat",
       "Key Report",
       "Account Balance",
@@ -674,8 +673,6 @@ class TestExportMultipleObjects(TestCase):
           ("Start Date", "01/02/2019"),
           ("End Date", "03/03/2019"),
       ]))
-      if model == "Risk":
-        import_queries[-1]["Risk Type"] = "Risk type"
       if model.replace(" ", "") in self.SCOPING_MODELS_NAMES:
         import_queries[-1]["Assignee"] = "user@example.com"
         import_queries[-1]["Verifier"] = "user@example.com"

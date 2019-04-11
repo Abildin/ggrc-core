@@ -21,7 +21,6 @@ COMMENTABLE_MODELS = [
     all_models.Regulation,
     all_models.Standard,
     all_models.Contract,
-    all_models.Risk,
     all_models.Threat,
     all_models.AccessGroup,
     all_models.DataAsset,
@@ -72,15 +71,11 @@ class TestCommentableImport(TestCase):
     if issubclass(model_cls, mixins.ScopeObject):
       import_data.append(("Assignee", "user@example.com"))
       import_data.append(("Verifier", "user@example.com"))
-    if model_name == "Control":
-      import_data.append(("Assertions*", "Privacy"))
     if issubclass(model_cls, mixins.audit_relationship.AuditRelationship):
       import_data.append(("Map:Audit", audit))
     if (issubclass(model_cls, mixins.Described) and
        "description" not in model_cls._aliases) or model_name == "Risk":
       import_data.append(("description", "{}-Description".format(model_name)))
-    if model_name == "Risk":
-      import_data.append(("Risk Type", "Risk type text"))
     response = self.import_data(OrderedDict(import_data))
     self._check_csv_response(response, {})
 
